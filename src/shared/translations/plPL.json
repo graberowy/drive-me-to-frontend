@@ -1,0 +1,11 @@
+{
+    "signin": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "fullName": "Imię i Nazwisko",
+    "login": "Użytkownik",
+    "password": "Hasło",
+    "mobile": "Numer komórkowy",
+    "customer": "Klient",
+    "employee": "Pracownik",
+    "commercialUser": "Użytkownik komercyjny"
+}
