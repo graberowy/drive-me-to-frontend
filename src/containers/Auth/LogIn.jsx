@@ -8,14 +8,52 @@ import TextField from "@mui/material/TextField";
 import ToggleLanguage from "../../shared/translations/LanguageChange";
 import { useStyles } from "./style";
 import { useTranslation } from "react-i18next";
+import { customerAuth, newCustomerAuth } from "../../shared/auth/auth";
+import { useNavigate } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
 
 const LogIn = () => {
   const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const fullName = "";
+  const mobileNo = "";
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
+  };
+
+  const customerLogIn = async () => {
+    const props = getValues();
+    console.log(props.fullName, props.mobileNo);
+    const autenticated = await customerAuth(props.mobileNo);
+    if (autenticated) {
+      navigate("/customer");
+    }
+  };
+
+  const {
+    control,
+    getValues,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      fullName,
+      mobileNo,
+    },
+  });
+
+  const onSubmitNewCustomer = async () => {
+    const props = getValues();
+    const createAndAutenticated = await newCustomerAuth(
+      props.fullName,
+      props.mobileNo
+    );
+    if (createAndAutenticated) {
+      navigate("/customer");
+    }
   };
 
   return (
@@ -43,40 +81,65 @@ const LogIn = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography align="center" style={{ marginBottom: "1rem" }}>
-                <TextField
-                  className={classes.input}
-                  fullWidth
-                  size="small"
-                  autoFocus
-                  id="nameLogIn"
-                  placeholder={t("fullName")}
-                  autoComplete="off"
-                  variant="outlined"
-                />
-              </Typography>
-              <Typography align="center" style={{ marginBottom: "1rem" }}>
-                <TextField
-                  className={classes.input}
-                  fullWidth
-                  size="small"
-                  autoFocus
-                  id="mobileLogIn"
-                  placeholder={t("mobile")}
-                  autoComplete="off"
-                  variant="outlined"
-                />
-              </Typography>
-              <Typography align="center">
-                <div style={{ display: "inline-flex" }}>
+              <form>
+                <Typography align="center" style={{ marginBottom: "1rem" }}>
+                  <Controller
+                    name="fullName"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        className={classes.input}
+                        fullWidth
+                        size="small"
+                        autoFocus
+                        id="nameLogIn"
+                        placeholder={t("fullName")}
+                        autoComplete="off"
+                        variant="outlined"
+                        required={true}
+                        inputProps={{ maxLength: 30 }}
+                        {...field}
+                      />
+                    )}
+                  />
+                </Typography>
+                <Typography align="center" style={{ marginBottom: "1rem" }}>
+                  <Controller
+                    name="mobileNo"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        className={classes.input}
+                        fullWidth
+                        autoComplete="off"
+                        size="small"
+                        autoFocus
+                        id="mobileLogIn"
+                        placeholder={t("mobile")}
+                        variant="outlined"
+                        inputProps={{ maxLength: 9 }}
+                        required
+                        {...field}
+                      />
+                    )}
+                  />
+                </Typography>
+
+                <Typography align="center" style={{ display: "inline-flex" }}>
                   <ButtonStyled
                     label={t("register")}
+                    //   type="submit"
                     buttonDark
                     customStyle={{ marginRight: "1rem" }}
+                    onClick={() => onSubmitNewCustomer()}
                   />
-                  <ButtonStyled label={t("signin")} />
-                </div>
-              </Typography>
+                  <ButtonStyled
+                    //    type="submit"
+                    label={t("signin")}
+                    onClick={() => customerLogIn()}
+                  />
+                </Typography>
+              </form>
             </AccordionDetails>
           </Accordion>
           <Accordion
@@ -124,10 +187,8 @@ const LogIn = () => {
                   variant="outlined"
                 />
               </Typography>
-              <Typography align="center">
-                <div style={{ display: "inline-flex" }}>
-                  <ButtonStyled label={t("signin")} />
-                </div>
+              <Typography align="center" style={{ display: "inline-flex" }}>
+                <ButtonStyled label={t("signin")} />
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -176,10 +237,8 @@ const LogIn = () => {
                   variant="outlined"
                 />
               </Typography>
-              <Typography align="center">
-                <div style={{ display: "inline-flex" }}>
-                  <ButtonStyled label={t("signin")} />
-                </div>
+              <Typography align="center" style={{ display: "inline-flex" }}>
+                <ButtonStyled label={t("signin")} />
               </Typography>
             </AccordionDetails>
           </Accordion>
