@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { customerAuth, newCustomerAuth } from "../../shared/auth/auth";
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
+import Grid from '@mui/material/Grid';
 
 const LogIn = () => {
   const [expanded, setExpanded] = useState(false);
@@ -26,7 +27,6 @@ const LogIn = () => {
 
   const customerLogIn = async () => {
     const props = getValues();
-    console.log(props.fullName, props.mobileNo);
     const autenticated = await customerAuth(props.mobileNo);
     if (autenticated) {
       navigate("/customer");
@@ -82,7 +82,7 @@ const LogIn = () => {
             </AccordionSummary>
             <AccordionDetails>
               <form>
-                <Typography align="center" style={{ marginBottom: "1rem" }}>
+                <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
                     name="fullName"
                     control={control}
@@ -102,8 +102,8 @@ const LogIn = () => {
                       />
                     )}
                   />
-                </Typography>
-                <Typography align="center" style={{ marginBottom: "1rem" }}>
+                </Grid>
+                <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
                     name="mobileNo"
                     control={control}
@@ -123,9 +123,9 @@ const LogIn = () => {
                       />
                     )}
                   />
-                </Typography>
+                </Grid>
 
-                <Typography align="center" style={{ display: "inline-flex" }}>
+                <Grid align="center" style={{ display: "inline-flex" }}>
                   <ButtonStyled
                     label={t("register")}
                     //   type="submit"
@@ -138,7 +138,7 @@ const LogIn = () => {
                     label={t("signin")}
                     onClick={() => customerLogIn()}
                   />
-                </Typography>
+                </Grid>
               </form>
             </AccordionDetails>
           </Accordion>
@@ -163,7 +163,7 @@ const LogIn = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography align="center" style={{ marginBottom: "1rem" }}>
+              <Grid align="center" style={{ marginBottom: "1rem" }}>
                 <TextField
                   className={classes.input}
                   fullWidth
@@ -174,8 +174,8 @@ const LogIn = () => {
                   autoComplete="off"
                   variant="outlined"
                 />
-              </Typography>
-              <Typography align="center" style={{ marginBottom: "1rem" }}>
+              </Grid>
+              <Grid align="center" style={{ marginBottom: "1rem" }}>
                 <TextField
                   className={classes.input}
                   fullWidth
@@ -186,10 +186,10 @@ const LogIn = () => {
                   autoComplete="off"
                   variant="outlined"
                 />
-              </Typography>
-              <Typography align="center" style={{ display: "inline-flex" }}>
+              </Grid>
+              <Grid align="center">
                 <ButtonStyled label={t("signin")} />
-              </Typography>
+              </Grid>
             </AccordionDetails>
           </Accordion>
           <Accordion
@@ -213,7 +213,7 @@ const LogIn = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography align="center" style={{ marginBottom: "1rem" }}>
+              <Grid align="center" style={{ marginBottom: "1rem" }}>
                 <TextField
                   className={classes.input}
                   fullWidth
@@ -224,8 +224,8 @@ const LogIn = () => {
                   autoComplete="off"
                   variant="outlined"
                 />
-              </Typography>
-              <Typography align="center" style={{ marginBottom: "1rem" }}>
+              </Grid>
+              <Grid align="center" style={{ marginBottom: "1rem" }}>
                 <TextField
                   className={classes.input}
                   fullWidth
@@ -236,15 +236,15 @@ const LogIn = () => {
                   autoComplete="off"
                   variant="outlined"
                 />
-              </Typography>
-              <Typography align="center" style={{ display: "inline-flex" }}>
+              </Grid>
+              <Grid align="center">
                 <ButtonStyled label={t("signin")} />
-              </Typography>
+              </Grid>
             </AccordionDetails>
           </Accordion>
-          <Typography align="center">
+          <Grid align="center">
             <ToggleLanguage />
-          </Typography>
+          </Grid>
         </div>
       </div>
     </div>

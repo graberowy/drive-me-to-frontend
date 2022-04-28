@@ -7,5 +7,12 @@
     "mobile": "Numer komórkowy",
     "customer": "Klient",
     "employee": "Pracownik",
-    "commercialUser": "Użytkownik komercyjny"
+    "commercialUser": "Użytkownik komercyjny",
+    "updateYourDetails": "Zaktualizuj swoje dane",
+    "update": "Akrualizuj",
+    "orderATransport": "Zamów transport",
+    "departureAddress": "Adres wyjazdu",
+    "destinationAddress": "Adres przyjazdu",
+    "order": "Zamów",
+    "advancedOptions": "Zaawansowane opcje"
 }

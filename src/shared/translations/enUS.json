@@ -7,5 +7,12 @@
     "mobile": "Mobile",
     "customer": "Customer",
     "employee": "Employee",
-    "commercialUser": "Commercial user"
+    "commercialUser": "Commercial user",
+    "updateYourDetails": "Update your details",
+    "update": "Update",
+    "orderATransport": "Order a transport",
+    "departureAddress": "Departure address",
+    "destinationAddress": "Destination address",
+    "order": "Order",
+    "advancedOptions": "Advanced options"
 }
