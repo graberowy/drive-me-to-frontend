@@ -14,5 +14,17 @@
     "departureAddress": "Departure address",
     "destinationAddress": "Destination address",
     "order": "Order",
-    "advancedOptions": "Advanced options"
+    "advancedOptions": "Advanced options",
+    "selectCar": "Car make",
+    "language": "Language",
+    "passengerTitle": "Welcome {{name}}, were we going today ?",
+    "orderPlacedSuccessfully": "Order no: {{id}}, was placed successfully!",
+    "orderSummaryDeparture": "Deprature: {{from}}",
+    "orderSummaryDestination": "Destination: {{to}}",
+    "orderSummaryDistance": "Distance: {{int}} KM",
+    "orderSummaryPrice": "Price: {{double}} PLN",
+    "orderSummaryDriver": "Driver: {{name}}",
+    "payAndRate": "Pay and rate",
+    "payAndRateButton": "Pay & Rate",
+    "tripRate": "Trip rate"
 }

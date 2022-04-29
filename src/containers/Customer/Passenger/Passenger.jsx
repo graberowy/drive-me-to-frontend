@@ -13,31 +13,116 @@ import Grid from "@mui/material/Grid";
 import SendIcon from "@mui/icons-material/Send";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import Button from "@mui/material/Button";
-import MenuItem from '@mui/material/MenuItem';
+import MenuItem from "@mui/material/MenuItem";
+import Rating from "@mui/material/Rating";
+import { axiosInstance } from "../../../shared/httpHandler/httpHandler";
 
 const Passenger = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
+  const [advancedOptions, setAdvancedOptions] = useState(false);
+  const [payAndRateOptions, setPayAndRateOptions] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [order, setOrder] = useState({});
+  const [value, setValue] = useState(2);
   const passengerName = sessionStorage.getItem("passenger-name");
+  const passengerId = sessionStorage.getItem("passenger-id");
   const fullName = "";
   const mobileNo = "";
+  const departure = "";
+  const destination = "";
+  const carMake = "";
+  const driverLanguage = "";
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
+  };
+
+  const toggleAdvancedOptions = () => {
+    setAdvancedOptions(!advancedOptions);
+    reset();
+  };
+
+  const togglePayAndRate = () => {
+    setPayAndRateOptions(!payAndRateOptions);
   };
 
   const {
     control,
     getValues,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
       fullName,
       mobileNo,
+      departure,
+      destination,
+      carMake,
+      driverLanguage,
     },
   });
+
+  const passengerUpdateData = async (dataForm) => {
+    const url = `/passengers/update/${passengerId}`;
+    const params = {
+      name: dataForm.fullName.length > 0 ? dataForm.fullName : null,
+      mobile: dataForm.mobileNo.length > 0 ? dataForm.mobileNo : null,
+    };
+    const { data } = await axiosInstance.patch(url, params);
+    if (data) {
+      sessionStorage.setItem("passenger-name", data.name);
+      sessionStorage.setItem("passenger-mobile", data.mobile);
+    }
+  };
+
+  const orderTripByPassenger = async (dataForm) => {
+    const url = "/trips";
+    const params = {
+      startAddress: dataForm.departure,
+      finishAddress: dataForm.destination,
+      passenger: {
+        id: passengerId,
+      },
+      preferCarMake: dataForm.carMake.length > 0 ? dataForm.carMake : null,
+      preferLanguage:
+        dataForm.driverLanguage.length > 0 ? dataForm.driverLanguage : null,
+    };
+    const { data } = await axiosInstance.post(url, params);
+    if (data) {
+      console.log(data);
+      setOrderPlaced(true);
+      setOrder(data);
+    }
+    reset();
+  };
+
+  const tripPayAndRate = async () => {
+    const url = `/trips/${order?.id}/paid/true/rating/${value}`;
+    const { data } = await axiosInstance.put(url);
+    if (data) {
+      console.log(data);
+    }
+  };
+
+  const OrderSummary = ({ text }) => {
+    return (
+      <Typography
+        variant="h6"
+        sx={{
+          width: "100%",
+          flexShrink: 0,
+          textAlign: "left",
+          color: "#FFF",
+          fontSize: "14px",
+        }}
+      >
+        {text}
+      </Typography>
+    );
+  };
 
   return (
     <div className={classes.mainContainer}>
@@ -52,7 +137,7 @@ const Passenger = () => {
               color: "#FFF",
             }}
           >
-            Welcome {passengerName}, were we going today ?
+            {t("passengerTitle", { name: `${passengerName}` })}
           </Typography>
         </div>
 
@@ -78,7 +163,7 @@ const Passenger = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <form>
+              <form onSubmit={handleSubmit(passengerUpdateData)}>
                 <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
                     name="fullName"
@@ -93,7 +178,6 @@ const Passenger = () => {
                         placeholder={t("fullName")}
                         autoComplete="off"
                         variant="outlined"
-                        required={true}
                         inputProps={{ maxLength: 30 }}
                         {...field}
                       />
@@ -115,7 +199,6 @@ const Passenger = () => {
                         placeholder={t("mobile")}
                         variant="outlined"
                         inputProps={{ maxLength: 9 }}
-                        required
                         {...field}
                       />
                     )}
@@ -123,10 +206,7 @@ const Passenger = () => {
                 </Grid>
 
                 <Typography align="center">
-                  <ButtonStyled
-                    //    type="submit"
-                    label={t("update")}
-                  />
+                  <ButtonStyled type="submit" label={t("update")} />
                 </Typography>
               </form>
             </AccordionDetails>
@@ -152,173 +232,238 @@ const Passenger = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Grid
-                align="center"
+              <div
                 style={{
-                  marginBottom: "1rem",
-                  display: "inline-flex",
-                  width: "100%",
+                  display: orderPlaced ? "none" : null,
                 }}
               >
-                <Controller
-                  name="departure"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      className={classes.input}
-                      fullWidth
-                      autoComplete="off"
-                      size="small"
-                      autoFocus
-                      id="departureAddress"
-                      placeholder={t("departureAddress")}
-                      variant="outlined"
-                      inputProps={{ maxLength: 9 }}
-                      required
-                      style={{ marginRight: "15px" }}
-                      {...field}
+                <form onSubmit={handleSubmit(orderTripByPassenger)}>
+                  <Grid
+                    align="center"
+                    style={{
+                      marginBottom: "1rem",
+                      display: "inline-flex",
+                      width: "100%",
+                    }}
+                  >
+                    <Controller
+                      name="departure"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.input}
+                          fullWidth
+                          autoComplete="off"
+                          size="small"
+                          autoFocus
+                          id="departureAddress"
+                          placeholder={t("departureAddress")}
+                          variant="outlined"
+                          inputProps={{ maxLength: 60 }}
+                          required
+                          style={{ marginRight: "15px" }}
+                          {...field}
+                        />
+                      )}
                     />
-                  )}
-                />
 
-                <Controller
-                  name="destination"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      className={classes.input}
-                      fullWidth
-                      autoComplete="off"
-                      size="small"
-                      autoFocus
-                      id="destinationAddress"
-                      placeholder={t("destinationAddress")}
-                      variant="outlined"
-                      inputProps={{ maxLength: 9 }}
-                      required
-                      {...field}
+                    <Controller
+                      name="destination"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.input}
+                          fullWidth
+                          autoComplete="off"
+                          size="small"
+                          autoFocus
+                          id="destinationAddress"
+                          placeholder={t("destinationAddress")}
+                          variant="outlined"
+                          inputProps={{ maxLength: 60 }}
+                          required
+                          {...field}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </Grid>
-              <Grid
-                className={classes.nakedButton}
-                align="center"
-                style={{ marginBottom: "1rem" }}
-              >
-                <Button variant="text" endIcon={<ArrowDownwardIcon />}>
-                  {t("advancedOptions")}
-                </Button>
-              </Grid>
-              <Grid
-                align="center"
+                  </Grid>
+                  <Grid
+                    className={classes.nakedButton}
+                    align="center"
+                    style={{ marginBottom: "1rem" }}
+                  >
+                    <Button
+                      variant="text"
+                      endIcon={<ArrowDownwardIcon />}
+                      onClick={toggleAdvancedOptions}
+                    >
+                      {t("advancedOptions")}
+                    </Button>
+                  </Grid>
+                  <Grid
+                    align="center"
+                    style={{
+                      marginBottom: "1rem",
+                      display: advancedOptions ? "inline-flex" : "none",
+                      width: "100%",
+                    }}
+                  >
+                    <Controller
+                      name="carMake"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.select}
+                          size="small"
+                          variant="standard"
+                          select
+                          label={t("selectCar")}
+                          style={{ marginRight: "15px" }}
+                          {...field}
+                        >
+                          <MenuItem key={0} value={"mercedes".toUpperCase()}>
+                            {"mercedes".toUpperCase()}
+                          </MenuItem>
+                          <MenuItem key={1} value={"bmw".toUpperCase()}>
+                            {"bmw".toUpperCase()}
+                          </MenuItem>
+                          <MenuItem key={2} value={"subaru".toUpperCase()}>
+                            {"subaru".toUpperCase()}
+                          </MenuItem>
+                        </TextField>
+                      )}
+                    />
+                    <Controller
+                      name="driverLanguage"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.select}
+                          size="small"
+                          variant="standard"
+                          select
+                          label={t("language")}
+                          {...field}
+                        >
+                          <MenuItem key={0} value={"polish".toUpperCase()}>
+                            {"polish".toUpperCase()}
+                          </MenuItem>
+                          <MenuItem key={1} value={"english".toUpperCase()}>
+                            {"english".toUpperCase()}
+                          </MenuItem>
+                          <MenuItem key={2} value={"german".toUpperCase()}>
+                            {"german".toUpperCase()}
+                          </MenuItem>
+                          <MenuItem key={3} value={"russian".toUpperCase()}>
+                            {"russian".toUpperCase()}
+                          </MenuItem>
+                        </TextField>
+                      )}
+                    />
+                  </Grid>
+                  <Grid align="center">
+                    <ButtonStyled
+                      type="submit"
+                      label={t("order")}
+                      endIcon={<SendIcon />}
+                    />
+                  </Grid>
+                </form>
+              </div>
+              <div
                 style={{
-                  marginBottom: "1rem",
-                  display: "inline-flex",
-                  width: "100%",
+                  display: !orderPlaced ? "none" : null,
                 }}
-              >
-                <Controller
-                  name={"carMake"}
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      className={classes.select}
-                      size="small"
-                      variant="standard"
-                      select
-                      //   value={cellPath}
-                      label={"select car"}
-                      style={{ marginRight: "15px" }}
-                      {...field}
-                    >
-                      <MenuItem key={"allow"} value={1}>
-                        {"allow".toUpperCase()}
-                      </MenuItem>
-                      <MenuItem key={"block"} value={0}>
-                        {"block".toUpperCase()}
-                      </MenuItem>
-                    </TextField>
-                  )}
-                />
-                <Controller
-                  name={"driverLanguage"}
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      className={classes.select}
-                      size="small"
-                      variant="standard"
-                      select
-                      //   value={cellPath}
-                      label={"select car"}
-                      {...field}
-                    >
-                      <MenuItem key={"allow"} value={1}>
-                        {"allow".toUpperCase()}
-                      </MenuItem>
-                      <MenuItem key={"block"} value={0}>
-                        {"block".toUpperCase()}
-                      </MenuItem>
-                    </TextField>
-                  )}
-                />
-              </Grid>
-              <Grid align="center">
-                <ButtonStyled label={t("order")} endIcon={<SendIcon />} />
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-          {/* <Accordion
-              expanded={expanded === "Commercial"}
-              onChange={handleChange("Commercial")}
-              className={classes.accordion}
-            >
-              <AccordionSummary
-                aria-controls="commercialbh-content"
-                id="commercialbh-header"
               >
                 <Typography
+                  variant="h6"
                   sx={{
                     width: "100%",
                     flexShrink: 0,
                     textAlign: "center",
-                    color: "#FFF",
+                    color: "#0e7500",
+                    marginBottom: "1rem",
                   }}
                 >
-                  {t("commercialUser")}
+                  {t("orderPlacedSuccessfully", { id: `${order?.id}` })}
                 </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography align="center" style={{ marginBottom: "1rem" }}>
-                  <TextField
-                    className={classes.input}
-                    fullWidth
-                    size="small"
-                    autoFocus
-                    id="commercialLogIn"
-                    placeholder={t("login")}
-                    autoComplete="off"
-                    variant="outlined"
-                  />
-                </Typography>
-                <Typography align="center" style={{ marginBottom: "1rem" }}>
-                  <TextField
-                    className={classes.input}
-                    fullWidth
-                    size="small"
-                    autoFocus
-                    id="commercialPasswordLogIn"
-                    placeholder={t("password")}
-                    autoComplete="off"
-                    variant="outlined"
-                  />
-                </Typography>
-                <Typography align="center" style={{ display: "inline-flex" }}>
-                  <ButtonStyled label={t("signin")} />
-                </Typography>
-              </AccordionDetails>
-            </Accordion> */}
+                <OrderSummary
+                  text={t("orderSummaryDeparture", {
+                    from: `${order?.fullStartAddress}`,
+                  })}
+                />
+                <OrderSummary
+                  text={t("orderSummaryDestination", {
+                    to: `${order?.fullFinishAddress}`,
+                  })}
+                />
+                <OrderSummary
+                  text={t("orderSummaryDistance", {
+                    int: `${order?.distance}`,
+                  })}
+                />
+                <OrderSummary
+                  text={t("orderSummaryPrice", { double: `${order?.price}` })}
+                />
+                <OrderSummary
+                  text={t("orderSummaryDriver", {
+                    name: `${order?.driver?.name}`,
+                  })}
+                />
+                <Grid
+                  className={classes.nakedButton}
+                  align="center"
+                  style={{ marginBottom: "1rem" }}
+                >
+                  <Button
+                    variant="text"
+                    endIcon={<ArrowDownwardIcon />}
+                    onClick={togglePayAndRate}
+                  >
+                    {t("payAndRate")}
+                  </Button>
+                </Grid>
+                <Grid
+                  align="center"
+                  style={{
+                    marginBottom: "1rem",
+                    display: payAndRateOptions ? null : "none",
+                    width: "100%",
+                  }}
+                >
+                  <div style={{ display: "inline-flex" }}>
+                    <div>
+                      <Typography
+                        component="legend"
+                        sx={{
+                          width: "100%",
+                          flexShrink: 0,
+                          color: "#b01fe0",
+                        }}
+                      >
+                        {t("tripRate")}
+                      </Typography>
+                      <Rating
+                        name="simple-controlled"
+                        value={value}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ marginLeft: "1rem" }}>
+                      <ButtonStyled
+                        onClick={tripPayAndRate}
+                        label={t("payAndRateButton")}
+                        endIcon={<SendIcon />}
+                      />
+                    </div>
+                  </div>
+                </Grid>
+              </div>
+            </AccordionDetails>
+          </Accordion>
           <Grid align="center">
             <ToggleLanguage />
           </Grid>

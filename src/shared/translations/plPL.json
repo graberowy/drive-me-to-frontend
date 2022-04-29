@@ -14,5 +14,17 @@
     "departureAddress": "Adres wyjazdu",
     "destinationAddress": "Adres przyjazdu",
     "order": "Zamów",
-    "advancedOptions": "Zaawansowane opcje"
+    "advancedOptions": "Zaawansowane opcje",
+    "selectCar": "Marka samochodu",
+    "language": "Język",
+    "passengerTitle": "Witam {{name}}, gdzie się dzisiaj wybierasz ?",
+    "orderPlacedSuccessfully": "Zamównie nr: {{id}}, utworzono pomyślnie!",
+    "orderSummaryDeparture": "Adres wyjazdu: {{from}}",
+    "orderSummaryDestination": "Adres przyjazdu: {{to}}",
+    "orderSummaryDistance": "Dystans: {{int}} KM",
+    "orderSummaryPrice": "Cena: {{double}} PLN",
+    "orderSummaryDriver": "Kierowca: {{name}}",
+    "payAndRate": "Zapłać i oceń",
+    "payAndRateButton": "Zapłać i oceń",
+    "tripRate": "Ocena podróży"
 }
