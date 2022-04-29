@@ -41,5 +41,11 @@ export const useStyles = makeStyles((theme) => ({
     boxShadow: "0 2px 2px 0 #ffffff14",
     margin: "0 auto",
     boxSizing: "border-box",
-  }
+  },
+  nakedButton: {
+    "& .MuiButtonBase-root.MuiButton-root": {
+      color: theme.palette.colorLink,
+      fontSize: "12px"
+    },
+},
 }));

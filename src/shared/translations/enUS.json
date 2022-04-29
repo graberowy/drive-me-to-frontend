@@ -26,5 +26,11 @@
     "orderSummaryDriver": "Driver: {{name}}",
     "payAndRate": "Pay and rate",
     "payAndRateButton": "Pay & Rate",
-    "tripRate": "Trip rate"
+    "tripRate": "Trip rate",
+    "orderPaid": "Payment made successfully! See you soon!",
+    "polish": "polish",
+    "english": "english",
+    "german": "german",
+    "russian": "russian",
+    "registerAccount": "Register account"
 }

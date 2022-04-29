@@ -12,6 +12,8 @@ import { customerAuth, newCustomerAuth } from "../../shared/auth/auth";
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Grid from '@mui/material/Grid';
+import Button from "@mui/material/Button";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const LogIn = () => {
   const [expanded, setExpanded] = useState(false);
@@ -20,6 +22,8 @@ const LogIn = () => {
   const navigate = useNavigate();
   const fullName = "";
   const mobileNo = "";
+  const newMobileNo = "";
+  const [registerOption, setRegisterOption] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -33,15 +37,21 @@ const LogIn = () => {
     }
   };
 
+  const toggleRegisterOption = () => {
+    setRegisterOption(!registerOption);
+    reset();
+  };
+
   const {
     control,
     getValues,
-    handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
       fullName,
       mobileNo,
+      newMobileNo
     },
   });
 
@@ -49,7 +59,7 @@ const LogIn = () => {
     const props = getValues();
     const createAndAutenticated = await newCustomerAuth(
       props.fullName,
-      props.mobileNo
+      props.newMobileNo
     );
     if (createAndAutenticated) {
       navigate("/customer");
@@ -84,6 +94,47 @@ const LogIn = () => {
               <form>
                 <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
+                    name="mobileNo"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        className={classes.input}
+                        fullWidth
+                        autoComplete="off"
+                        size="small"
+                        autoFocus
+                        id="mobileLogIn"
+                        placeholder={t("mobile")}
+                        variant="outlined"
+                        inputProps={{ maxLength: 9 }}
+                        required
+                        {...field}
+                      />
+                    )}
+                  />
+                   <Grid align="center" style={{ marginTop: "1rem" }}>
+                       <ButtonStyled
+                    label={t("signin")}
+                    onClick={() => customerLogIn()}
+                  />
+                      </Grid>
+                </Grid>
+                <Grid
+            className={classes.nakedButton}
+            align="center"
+            style={{ marginBottom: "1rem" }}
+          >
+            <Button
+              variant="text"
+              endIcon={<ArrowDownwardIcon />}
+              onClick={toggleRegisterOption}
+            >
+              {t("registerAccount")}
+            </Button>
+          </Grid>
+                <Grid align="center" style={{display: registerOption ? null : "none"}}>
+                <Grid align="center" style={{ marginBottom: "1rem" }}>
+                  <Controller
                     name="fullName"
                     control={control}
                     render={({ field }) => (
@@ -105,7 +156,7 @@ const LogIn = () => {
                 </Grid>
                 <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
-                    name="mobileNo"
+                    name="newMobileNo"
                     control={control}
                     render={({ field }) => (
                       <TextField
@@ -114,7 +165,7 @@ const LogIn = () => {
                         autoComplete="off"
                         size="small"
                         autoFocus
-                        id="mobileLogIn"
+                        id="newMobileLogIn"
                         placeholder={t("mobile")}
                         variant="outlined"
                         inputProps={{ maxLength: 9 }}
@@ -124,20 +175,13 @@ const LogIn = () => {
                     )}
                   />
                 </Grid>
-
-                <Grid align="center" style={{ display: "inline-flex" }}>
                   <ButtonStyled
                     label={t("register")}
-                    //   type="submit"
                     buttonDark
                     customStyle={{ marginRight: "1rem" }}
                     onClick={() => onSubmitNewCustomer()}
                   />
-                  <ButtonStyled
-                    //    type="submit"
-                    label={t("signin")}
-                    onClick={() => customerLogIn()}
-                  />
+             
                 </Grid>
               </form>
             </AccordionDetails>

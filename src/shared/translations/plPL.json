@@ -26,5 +26,11 @@
     "orderSummaryDriver": "Kierowca: {{name}}",
     "payAndRate": "Zapłać i oceń",
     "payAndRateButton": "Zapłać i oceń",
-    "tripRate": "Ocena podróży"
+    "tripRate": "Ocena podróży",
+    "orderPaid": "Płatność zrealizowana pomyślnie! Do zobaczenia wkrótce!",
+    "polish": "poolski",
+    "english": "angielski",
+    "german": "niemiecki",
+    "russian": "rosyjski",
+    "registerAccount": "Zarejestruj konto"
 }
