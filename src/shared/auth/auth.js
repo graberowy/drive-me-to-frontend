@@ -1,31 +1,52 @@
 import { axiosInstance } from "../httpHandler/httpHandler";
+import { storeTokens, purgeTokens } from "./tokenJWT";
+import decodeJwt from "jwt-decode";
+import sessionManager from "../httpHandler/httpSessionManager";
 
-export const customerAuth = async (mobile) => {
-  const url = `/passengers/mobile/${mobile}`;
-  const { data } = await axiosInstance.get(url);
-  if (data) {
-    sessionStorage.setItem("passenger-autenticated", true);
-    sessionStorage.setItem("passenger-name", data.name);
-    sessionStorage.setItem("passenger-mobile", data.mobile);
-    sessionStorage.setItem("passenger-id", data.id);
+export const customerAuth = async (username, password) => {
+  const url = "/login";
+  const response = await axiosInstance.post(
+    url,
+    new URLSearchParams({
+      userLogin: username,
+      userPassword: password,
+    })
+  );
+  if (response) {
+    const decodedToken = decodeJwt(response.data.access_token);
+    storeTokens(response.data);
+    sessionStorage.setItem("username", decodedToken.sub);
+    sessionManager.setSessionRefresh(decodedToken.exp);
     return true;
   }
   return false;
 };
 
-export const newCustomerAuth = async (fullName, mobileNo) => {
-  const url = "/passengers";
+export const newCustomerAuth = async (
+  fullName,
+  mobileNo,
+  username,
+  password
+) => {
+  const url = "/customer/new";
   const params = {
-    name: fullName,
-    mobile: mobileNo,
+    userLogin: username,
+    userPassword: password,
+    roles: ["CUSTOMER"],
+    passenger: {
+      name: fullName,
+      mobile: mobileNo,
+    },
   };
   const { data } = await axiosInstance.post(url, params);
   if (data) {
-    sessionStorage.setItem("passenger-autenticated", true);
-    sessionStorage.setItem("passenger-name", data.name);
-    sessionStorage.setItem("passenger-mobile", data.mobile);
-    sessionStorage.setItem("passenger-id", data.id);
+    await customerAuth(username, password);
     return true;
   }
   return false;
+};
+
+export const userLogOut = () => {
+  purgeTokens();
+  sessionStorage.removeItem("username");
 };

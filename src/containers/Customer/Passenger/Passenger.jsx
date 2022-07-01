@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useStyles } from "./style";
 import { useTranslation } from "react-i18next";
 import Accordion from "@mui/material/Accordion";
@@ -12,10 +13,13 @@ import { Controller, useForm } from "react-hook-form";
 import Grid from "@mui/material/Grid";
 import OrderDetails from "./components/OrderDetails";
 import { axiosInstance } from "../../../shared/httpHandler/httpHandler";
+import { userLogOut } from "../../../shared/auth/auth";
+import TimeoutModal from "../../../shared/components/Timeout/TimeoutModal";
 
 const Passenger = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [advancedOptions, setAdvancedOptions] = useState(false);
   const [payAndRateOptions, setPayAndRateOptions] = useState(false);
@@ -23,14 +27,20 @@ const Passenger = () => {
   const [paid, setPaid] = useState(false);
   const [order, setOrder] = useState({});
   const [value, setValue] = useState(1);
-  const passengerName = sessionStorage.getItem("passenger-name");
-  const passengerId = sessionStorage.getItem("passenger-id");
+  const userLogin = sessionStorage.getItem("username");
+  const [passengerDetails, setPassengerDetails] = useState("");
+  const [passengerName, setPassengerName] = useState("");
+  const [passengerId, setPassengerId] = useState("");
   const fullName = "";
   const mobileNo = "";
   const departure = "";
   const destination = "";
   const carMake = "";
   const driverLanguage = "";
+
+  useEffect(() => {
+    getPassengerDetails();
+  }, []);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -43,6 +53,11 @@ const Passenger = () => {
 
   const togglePayAndRate = () => {
     setPayAndRateOptions(!payAndRateOptions);
+  };
+
+  const signOut = () => {
+    userLogOut();
+    navigate("/log_out");
   };
 
   const {
@@ -62,6 +77,16 @@ const Passenger = () => {
     },
   });
 
+  const getPassengerDetails = async () => {
+    const url = `/users/${userLogin}`;
+    const { data } = await axiosInstance.get(url);
+    if (data) {
+      setPassengerDetails(data);
+      setPassengerName(data?.passenger?.name);
+      setPassengerId(data?.passenger?.id);
+    }
+  };
+
   const passengerUpdateData = async (dataForm) => {
     const url = `/passengers/update/${passengerId}`;
     const params = {
@@ -70,8 +95,8 @@ const Passenger = () => {
     };
     const { data } = await axiosInstance.patch(url, params);
     if (data) {
-      sessionStorage.setItem("passenger-name", data.name);
-      sessionStorage.setItem("passenger-mobile", data.mobile);
+      getPassengerDetails();
+      reset();
     }
   };
 
@@ -81,7 +106,7 @@ const Passenger = () => {
       startAddress: dataForm.departure,
       finishAddress: dataForm.destination,
       passenger: {
-        id: passengerId,
+        id: passengerDetails.passenger.id,
       },
       preferCarMake: dataForm.carMake.length > 0 ? dataForm.carMake : null,
       preferLanguage:
@@ -231,10 +256,16 @@ const Passenger = () => {
             </AccordionDetails>
           </Accordion>
           <Grid align="center">
-            <ToggleLanguage />
+            <div style={{ paddingBottom: "1rem" }}>
+              <ToggleLanguage />
+            </div>
+            <div>
+              <ButtonStyled onClick={signOut} label={t("logout")} />
+            </div>
           </Grid>
         </div>
       </div>
+      <TimeoutModal />
     </div>
   );
 };

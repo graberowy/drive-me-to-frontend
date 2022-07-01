@@ -11,9 +11,10 @@ import { useTranslation } from "react-i18next";
 import { customerAuth, newCustomerAuth } from "../../shared/auth/auth";
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { accessToken } from "../../shared/auth/tokenJWT";
 
 const LogIn = () => {
   const [expanded, setExpanded] = useState(false);
@@ -21,8 +22,11 @@ const LogIn = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const fullName = "";
-  const mobileNo = "";
   const newMobileNo = "";
+  const username = "";
+  const password = "";
+  const newUsername = "";
+  const newPassword = "";
   const [registerOption, setRegisterOption] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -31,8 +35,8 @@ const LogIn = () => {
 
   const customerLogIn = async () => {
     const props = getValues();
-    const autenticated = await customerAuth(props.mobileNo);
-    if (autenticated) {
+    const autenticated = await customerAuth(props.username, props.password);
+    if (autenticated && accessToken) {
       navigate("/customer");
     }
   };
@@ -50,8 +54,11 @@ const LogIn = () => {
   } = useForm({
     defaultValues: {
       fullName,
-      mobileNo,
-      newMobileNo
+      newMobileNo,
+      username,
+      password,
+      newUsername,
+      newPassword,
     },
   });
 
@@ -59,7 +66,9 @@ const LogIn = () => {
     const props = getValues();
     const createAndAutenticated = await newCustomerAuth(
       props.fullName,
-      props.newMobileNo
+      props.newMobileNo,
+      props.newUsername,
+      props.newPassword
     );
     if (createAndAutenticated) {
       navigate("/customer");
@@ -94,48 +103,7 @@ const LogIn = () => {
               <form>
                 <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
-                    name="mobileNo"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        className={classes.input}
-                        fullWidth
-                        autoComplete="off"
-                        size="small"
-                        autoFocus
-                        id="mobileLogIn"
-                        placeholder={t("mobile")}
-                        variant="outlined"
-                        inputProps={{ maxLength: 9 }}
-                        required
-                        {...field}
-                      />
-                    )}
-                  />
-                   <Grid align="center" style={{ marginTop: "1rem" }}>
-                       <ButtonStyled
-                    label={t("signin")}
-                    onClick={() => customerLogIn()}
-                  />
-                      </Grid>
-                </Grid>
-                <Grid
-            className={classes.nakedButton}
-            align="center"
-            style={{ marginBottom: "1rem" }}
-          >
-            <Button
-              variant="text"
-              endIcon={<ArrowDownwardIcon />}
-              onClick={toggleRegisterOption}
-            >
-              {t("registerAccount")}
-            </Button>
-          </Grid>
-                <Grid align="center" style={{display: registerOption ? null : "none"}}>
-                <Grid align="center" style={{ marginBottom: "1rem" }}>
-                  <Controller
-                    name="fullName"
+                    name="username"
                     control={control}
                     render={({ field }) => (
                       <TextField
@@ -143,8 +111,8 @@ const LogIn = () => {
                         fullWidth
                         size="small"
                         autoFocus
-                        id="nameLogIn"
-                        placeholder={t("fullName")}
+                        id="usernameLogIn"
+                        placeholder={t("username")}
                         autoComplete="off"
                         variant="outlined"
                         required={true}
@@ -156,7 +124,7 @@ const LogIn = () => {
                 </Grid>
                 <Grid align="center" style={{ marginBottom: "1rem" }}>
                   <Controller
-                    name="newMobileNo"
+                    name="password"
                     control={control}
                     render={({ field }) => (
                       <TextField
@@ -165,8 +133,8 @@ const LogIn = () => {
                         autoComplete="off"
                         size="small"
                         autoFocus
-                        id="newMobileLogIn"
-                        placeholder={t("mobile")}
+                        id="passwordLogIn"
+                        placeholder={t("password")}
                         variant="outlined"
                         inputProps={{ maxLength: 9 }}
                         required
@@ -175,13 +143,119 @@ const LogIn = () => {
                     )}
                   />
                 </Grid>
+                <Grid align="center" style={{ marginTop: "1rem" }}>
+                  <ButtonStyled
+                    label={t("signin")}
+                    onClick={() => customerLogIn()}
+                  />
+                </Grid>
+                <Grid
+                  className={classes.nakedButton}
+                  align="center"
+                  style={{ marginBottom: "1rem" }}
+                >
+                  <Button
+                    variant="text"
+                    endIcon={<ArrowDownwardIcon />}
+                    onClick={toggleRegisterOption}
+                  >
+                    {t("registerAccount")}
+                  </Button>
+                </Grid>
+                <Grid
+                  align="center"
+                  style={{ display: registerOption ? null : "none" }}
+                >
+                  <Grid align="center" style={{ marginBottom: "1rem" }}>
+                    <Controller
+                      name="newUsername"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.input}
+                          fullWidth
+                          size="small"
+                          autoFocus
+                          id="newUsernameLogIn"
+                          placeholder={t("username")}
+                          autoComplete="off"
+                          variant="outlined"
+                          required={true}
+                          inputProps={{ maxLength: 30 }}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid align="center" style={{ marginBottom: "1rem" }}>
+                    <Controller
+                      name="newPassword"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.input}
+                          fullWidth
+                          autoComplete="off"
+                          size="small"
+                          autoFocus
+                          id="newPasswordLogIn"
+                          placeholder={t("password")}
+                          variant="outlined"
+                          inputProps={{ maxLength: 9 }}
+                          required
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid align="center" style={{ marginBottom: "1rem" }}>
+                    <Controller
+                      name="fullName"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.input}
+                          fullWidth
+                          size="small"
+                          autoFocus
+                          id="nameLogIn"
+                          placeholder={t("fullName")}
+                          autoComplete="off"
+                          variant="outlined"
+                          required={true}
+                          inputProps={{ maxLength: 30 }}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid align="center" style={{ marginBottom: "1rem" }}>
+                    <Controller
+                      name="newMobileNo"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className={classes.input}
+                          fullWidth
+                          autoComplete="off"
+                          size="small"
+                          autoFocus
+                          id="newMobileLogIn"
+                          placeholder={t("mobile")}
+                          variant="outlined"
+                          inputProps={{ maxLength: 9 }}
+                          required
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Grid>
                   <ButtonStyled
                     label={t("register")}
                     buttonDark
                     customStyle={{ marginRight: "1rem" }}
                     onClick={() => onSubmitNewCustomer()}
                   />
-             
                 </Grid>
               </form>
             </AccordionDetails>

@@ -1,5 +1,6 @@
 {
     "signin": "Sign in",
+    "signinAgain": "Sign in again",
     "register": "Register",
     "fullName": "Full Name",
     "login": "Login",
@@ -32,5 +33,12 @@
     "english": "english",
     "german": "german",
     "russian": "russian",
-    "registerAccount": "Register account"
+    "registerAccount": "Register account",
+    "username": "Username",
+    "logout": "Sign out",
+    "logoutSentence": "You has been correctly signed out",
+    "sessionTimeout": "Session timeout",
+    "timeoutBodyWarn": "In {{time}} seconds, you will be automatically logged out",
+    "keepMeLogIn": "Keep me log in"
+
 }

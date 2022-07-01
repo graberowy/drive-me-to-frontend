@@ -1,4 +1,9 @@
 # Getting Started with Create React App
+Backend part for this app -> https://github.com/graberowy/drive-me-to-backend
+
+To run project locally : terminal -> npm install -> npm start
+
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

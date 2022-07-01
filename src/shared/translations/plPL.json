@@ -1,5 +1,6 @@
 {
     "signin": "Zaloguj się",
+    "signinAgain": "Zaloguj się ponownie",
     "register": "Zarejestruj się",
     "fullName": "Imię i Nazwisko",
     "login": "Użytkownik",
@@ -9,7 +10,7 @@
     "employee": "Pracownik",
     "commercialUser": "Użytkownik komercyjny",
     "updateYourDetails": "Zaktualizuj swoje dane",
-    "update": "Akrualizuj",
+    "update": "Aktualizuj",
     "orderATransport": "Zamów transport",
     "departureAddress": "Adres wyjazdu",
     "destinationAddress": "Adres przyjazdu",
@@ -28,9 +29,15 @@
     "payAndRateButton": "Zapłać i oceń",
     "tripRate": "Ocena podróży",
     "orderPaid": "Płatność zrealizowana pomyślnie! Do zobaczenia wkrótce!",
-    "polish": "poolski",
+    "polish": "polski",
     "english": "angielski",
     "german": "niemiecki",
     "russian": "rosyjski",
-    "registerAccount": "Zarejestruj konto"
+    "registerAccount": "Zarejestruj konto",
+    "username": "Nazwa użytkownika",
+    "logout": "Wyloguj",
+    "logoutSentence": "Nastąpiło poprawne wylogowanie z systemu",
+    "sessionTimeout": "Limit czasu sesji",
+    "timeoutBodyWarn": "Za {{time}} sekund, nastąpi automatyczne wylogowanie",
+    "keepMeLogIn": "Nie wylogowuj mnie"
 }
